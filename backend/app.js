@@ -1,12 +1,14 @@
 const express = require('express');
 const app = express();
 
+// Déclaration et importation des routes 
 const userRoutes = require('./routes/user');
-
-// const bodyParser = require('body-parser');
-// app.use(bodyParser.json());
+const sauceRoutes = require('./routes/sauce')
 
 app.use(express.json());
+
+// permet de travailler avec le chemin des fichiers et des repertoires
+const path = require('path');
 
 //Installation mongoose et le connecter à notre API 
 const mongoose = require('mongoose');
@@ -29,25 +31,13 @@ app.use((req, res, next) => {
     next();
 });
 
-// app.use((req, res, next) => {
-//     console.log('Requête reçue !');
-//     next();
-// });  
-
-// app.use((req, res, next) => {
-//     res.status(201);
-//     next();
-// });
-
-// app.use((req, res, next) => {
-//     res.json({ message: 'Votre requête a bien été reçue !' });
-//     next();
-// });
-
-// app.use((req, res, next) => {
-//     console.log('Réponse envoyée avec succès !');
-// });
-
+//route generale pour la creation et l'authentification user 
 app.use('/api/auth', userRoutes);
+
+// route generale pour la creation, modification et supp. des sauces 
+app.use('/api/sauces', sauceRoutes);
+
+//Cela indique a express qu'il faut gérér la ressource image 
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 module.exports = app;
