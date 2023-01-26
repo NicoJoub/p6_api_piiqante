@@ -17,7 +17,16 @@ router.get('/', auth, sauceCtrl.getAllSauces);
 //routeur pour recuperer une sauce
 router.get('/:id', auth, sauceCtrl.getOneSauce);
 
-// route post pour envoyer une nouvelle sauve
+// route post pour envoyer une nouvelle sauce
 router.post('/', auth, multer, sauceCtrl.createSauce);
+
+// route pour modifier une sauce
+router.put("/:id", auth, multer, sauceCtrl.modifySauce);
+
+//route pour supprimer une sauce
+router.delete("/:id", auth, sauceCtrl.deleteSauce);
+
+//route pour like et dislike la sauce
+router.post('/:id/like', auth, sauceCtrl.likeSauce);
 
 module.exports = router; 

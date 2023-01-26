@@ -16,9 +16,9 @@ const storage = multer.diskStorage({
     destination: (req, file, callback) => {
         callback(null, 'images');
     },
-    // la fonction file namge indique à multer d'utiliser le nom d'origine, et de remplacer les espaces par des undersocres et d'ajouter un timestrape date.now() comme nom de fichier. 
+    // la fonction file namge indique à multer d'utiliser le nom d'origine, la méthode split + 0 pour enlever le nom dse l'extention et de remplacer les espaces par des undersocres et d'ajouter un timestrape date.now() comme nom de fichier. 
     filename: (req, file, callback) => {
-        const name = file.originalname.split(' ').join('_');
+        const name = file.originalname.split('.')[0].split(' ').join('_');
         const extension = MIME_TYPES[file.mimetype];
         callback(null, name + Date.now() + '.' + extension);
     }
