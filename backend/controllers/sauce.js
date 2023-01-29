@@ -48,7 +48,7 @@ exports.modifySauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
         .then((sauce) => {
             if (sauce.userId != req.auth.userId) {
-                res.status(401).json({ message: 'Non autorisé' });
+                res.status(403).json({ message: 'Non autorisé' });
             } else {
                 const filename = sauce.imageUrl.split("/images/")[1];
                 //suppression de l'image de la sauce car elle va être remplacer par la nouvelle image de sauce
@@ -72,7 +72,7 @@ exports.deleteSauce = (req, res, next) => {
         .then((sauce) => {
             // onb vérifie que l'utilisateur qui a crée la suace est bien le bon 
             if (sauce.userId != req.auth.userId) {
-                res.status(401).json({ message: 'Non autorisée' });
+                res.status(403).json({ message: 'Non autorisée' });
             } else {
                 const filename = sauce.imageUrl.split("/images/")[1];
                 // suppression via la méthode unlike de FS avec le chemin pour trouver le fichier 
@@ -97,43 +97,24 @@ exports.likeSauce = (req, res, next) => {
         .then((sauce) => {
             //si le client veut like
             if (like == 1) {
-                if (sauce.usersDisliked.includes(userId)) {
-                    // Annulation du "dislike" et ajout d'un "like"
-                    Sauce.findByIdAndUpdate(
-                        { _id: id },
-                        { $pull: { usersDisliked: userId }, $inc: { dislikes: -1 }, $addToSet: { usersLiked: userId }, $inc: { likes: 1 } }
-                    )
-                        .then(res.status(200).json({ message: 'Dislike annulé et Like ajouté' }))
-                        .catch((err) => res.status(500).json(err));
-                } else {
-                    // Ajout d'un "like"
-                    Sauce.findByIdAndUpdate(
-                        { _id: id },
-                        { $addToSet: { usersLiked: userId }, $inc: { likes: 1 } }
-                    )
-                        .then(res.status(200).json({ message: 'Like ajouté' }))
-                        .catch((err) => res.status(500).json(err));
-                }
+                // Ajout d'un "like"
+                Sauce.findByIdAndUpdate(
+                    { _id: id },
+                    { $addToSet: { usersLiked: userId }, $inc: { likes: 1 } }
+                )
+                    .then(res.status(200).json({ message: 'Like ajouté' }))
+                    .catch((err) => res.status(500).json(err));
             }
             //si le client veut dislike
             else if (like == -1) {
-                if (sauce.usersLiked.includes(userId)) {
-                    // Annulation du "like" et ajout d'un "dislike"
-                    Sauce.findByIdAndUpdate(
-                        { _id: id },
-                        { $pull: { usersLiked: userId }, $inc: { likes: -1 }, $addToSet: { usersDisliked: userId }, $inc: { dislikes: 1 } }
-                    )
-                        .then(res.status(200).json({ message: 'Like annulé et Dislike ajouté' }))
-                        .catch((err) => res.status(500).json(err));
-                } else {
-                    // Ajout d'un "dislike"
-                    Sauce.findByIdAndUpdate(
-                        { _id: id },
-                        { $addToSet: { usersDisliked: userId }, $inc: { dislikes: 1 } }
-                    )
-                        .then(res.status(200).json({ message: 'Dislike ajouté' }))
-                        .catch((err) => res.status(500).json(err));
-                }
+
+                // Ajout d'un "dislike"
+                Sauce.findByIdAndUpdate(
+                    { _id: id },
+                    { $addToSet: { usersDisliked: userId }, $inc: { dislikes: 1 } }
+                )
+                    .then(res.status(200).json({ message: 'Dislike ajouté' }))
+                    .catch((err) => res.status(500).json(err));
             }
             //si le client veut supprimer son like ou dislike
             else {

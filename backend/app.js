@@ -1,5 +1,8 @@
 const express = require('express');
 const app = express();
+const helmet = require("helmet");
+
+app.use(helmet());
 
 // Déclaration et importation des routes 
 const userRoutes = require('./routes/user');
