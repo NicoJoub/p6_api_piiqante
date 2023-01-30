@@ -1,8 +1,9 @@
 const express = require('express');
-const app = express();
 const helmet = require("helmet");
+const app = express();
 
-app.use(helmet());
+// protection contre la faille xss pour évitrer la lecture d'un script malveillant pouvant récuperer les données utilisateurs 
+app.use(helmet.xssFilter());
 
 // Déclaration et importation des routes 
 const userRoutes = require('./routes/user');
@@ -24,6 +25,7 @@ mongoose.connect('mongodb+srv://Gildas:DBi5gPGaKZvNLgcF@openclassrooms.tky5qh7.m
     .catch(() => console.log('Connexion à MongoDB échouée !'));
 
 
+
 app.use((req, res, next) => {
     //acceder a l'api depuis n'importe qulle origine ('*')
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -42,5 +44,7 @@ app.use('/api/sauces', sauceRoutes);
 
 //Cela indique a express qu'il faut gérér la ressource image 
 app.use('/images', express.static(path.join(__dirname, 'images')));
+
+
 
 module.exports = app;
